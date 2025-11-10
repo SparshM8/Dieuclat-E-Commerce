@@ -1,0 +1,17 @@
+﻿{
+  "folders": [
+    {
+      "name": "dieuclat-react",
+      "path": "dieuclat-react"
+    },
+    {
+      "name": "backend",
+      "path": "backend"
+    }
+  ],
+  "settings": {
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
+    "typescript.suggest.autoImports": true,
+    "typescript.updateImportsOnFileMove.enabled": "always"
+  }
+}
