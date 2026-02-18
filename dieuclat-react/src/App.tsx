@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Product } from './hooks/useAppState';
 import { AuthProvider, useAuth } from './hooks/useAuth';
+import { useToast } from './hooks/useToast';
 import Header from './components/Header';
-import Hero from './components/Hero';
+import HeroEnhanced from './components/HeroEnhanced';
 import FeaturedCategories from './components/FeaturedCategories';
 import BestSellers from './components/BestSellers';
 import AllProducts from './components/AllProducts';
@@ -21,6 +22,7 @@ import AdminPanel from './components/AdminPanel';
 import Wishlist from './components/Wishlist';
 import BackToTop from './components/BackToTop';
 import ChatWidget from './components/ChatWidget';
+import { ToastContainer } from './components/ToastContainer';
 import { useCart, useModal, useScrollEffects, useWishlist, useRecentlyViewed, products } from './hooks/useAppState';
 import { NotificationContainer } from './components/NotificationContainer';
 
@@ -31,6 +33,7 @@ function AppContent() {
   const wishlistState = useWishlist();
   const recentlyViewedState = useRecentlyViewed();
   const { authState } = useAuth();
+  const { toasts, show, remove } = useToast();
 
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [showAuth, setShowAuth] = useState(false);
@@ -119,7 +122,7 @@ function AppContent() {
       />
       <main>
         <div className="fade-in">
-          <Hero />
+          <HeroEnhanced />
         </div>
         <div className="fade-in-up stagger-1" id="occasions">
           <FeaturedCategories />
@@ -187,6 +190,7 @@ function AppContent() {
 
       {/* Notifications */}
       <NotificationContainer notifications={cartState.notifications} />
+      <ToastContainer toasts={toasts} onRemove={remove} />
     </div>
   );
 }
