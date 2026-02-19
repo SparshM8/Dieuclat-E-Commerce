@@ -7,6 +7,7 @@
 // 1. PREMIUM BUTTON COMPONENT
 // ============================================
 import React from 'react';
+import { Eye, Heart, ShoppingBag, Star } from 'lucide-react';
 
 export const PremiumButton: React.FC<{
   children: React.ReactNode;
@@ -51,19 +52,22 @@ export const PremiumButton: React.FC<{
 // 2. PREMIUM PRODUCT CARD
 // ============================================
 export const PremiumProductCard: React.FC<{
-  id: string;
+  id: string | number;
   name: string;
   price: number;
   originalPrice?: number;
   image: string;
   rating?: number;
   badge?: string;
+  isWishlisted?: boolean;
   onAddToCart?: () => void;
   onWishlist?: () => void;
+  onQuickView?: () => void;
   onClick?: () => void;
-}> = ({ id, name, price, originalPrice, image, rating = 0, badge, onAddToCart, onWishlist, onClick }) => {
-  const [isWishlisted, setIsWishlisted] = React.useState(false);
+}> = ({ id, name, price, originalPrice, image, rating = 0, badge, isWishlisted, onAddToCart, onWishlist, onQuickView, onClick }) => {
+  const [isWishlistedState, setIsWishlistedState] = React.useState(false);
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+  const wishlisted = isWishlisted ?? isWishlistedState;
 
   return (
     <div
@@ -100,13 +104,28 @@ export const PremiumProductCard: React.FC<{
         <button
           onClick={(e) => {
             e.stopPropagation();
-            setIsWishlisted(!isWishlisted);
+            if (isWishlisted === undefined) {
+              setIsWishlistedState(!isWishlistedState);
+            }
             onWishlist?.();
           }}
           className="absolute top-4 right-4 p-3 bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-lg z-20"
         >
-          <Heart className={`w-5 h-5 transition-colors ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+          <Heart className={`w-5 h-5 transition-colors ${wishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
         </button>
+
+        {onQuickView && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onQuickView();
+            }}
+            className="absolute bottom-4 right-4 p-3 bg-white/90 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-lg z-20"
+            aria-label={`Quick view ${name}`}
+          >
+            <Eye className="w-5 h-5 text-gray-600" />
+          </button>
+        )}
 
         {/* Add to cart button - appears on hover */}
         <button

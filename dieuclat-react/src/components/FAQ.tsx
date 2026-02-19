@@ -1,6 +1,8 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useFAQ } from '../hooks/useAppState';
+import { SectionHeader } from './UIComponents';
+import { GlassMorphismCard } from './PremiumUIComponents';
 
 const FAQ: React.FC = () => {
   const { toggleItem, isOpen } = useFAQ();
@@ -34,29 +36,32 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <section id="faq" className="py-16 bg-gray-50">
+    <section id="faq" className="py-16 bg-gradient-to-b from-gray-50 via-white to-gray-50">
       <div className="container mx-auto px-6 max-w-4xl">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
-          <p className="text-gray-600 text-lg">Everything you need to know about shopping with Dieuclat</p>
-        </div>
+        <SectionHeader
+          title="Frequently Asked Questions"
+          subtitle="Help Center"
+          description="Everything you need to know about shopping with Dieuclat"
+        />
 
-        <div className="space-y-4">
-          {faqs.map((faq) => (
-            <div key={faq.id} className="bg-white rounded-xl shadow-md overflow-hidden">
-              <button
-                className="faq-question w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-all duration-300"
-                onClick={() => toggleItem(faq.id)}
-              >
-                <span className="font-semibold text-lg text-gray-900">{faq.question}</span>
-                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isOpen(faq.id) ? 'rotate-180' : ''}`} />
-              </button>
-              <div className={`faq-answer ${isOpen(faq.id) ? '' : 'hidden'} p-6 pt-0 text-gray-700 border-t border-gray-100`}>
-                <p>{faq.answer}</p>
+        <GlassMorphismCard className="bg-white/70">
+          <div className="space-y-4">
+            {faqs.map((faq) => (
+              <div key={faq.id} className="bg-white/90 rounded-xl shadow-sm overflow-hidden">
+                <button
+                  className="faq-question w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition-all duration-300"
+                  onClick={() => toggleItem(faq.id)}
+                >
+                  <span className="font-semibold text-lg text-gray-900">{faq.question}</span>
+                  <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isOpen(faq.id) ? 'rotate-180' : ''}`} />
+                </button>
+                <div className={`faq-answer ${isOpen(faq.id) ? '' : 'hidden'} p-6 pt-0 text-gray-700 border-t border-gray-100`}>
+                  <p>{faq.answer}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </GlassMorphismCard>
 
         <div className="text-center mt-12">
           <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-800 rounded-2xl p-8 text-white shadow-xl">

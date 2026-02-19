@@ -24,6 +24,7 @@ interface SectionHeaderProps {
   subtitle?: string;
   description?: string;
   centered?: boolean;
+  className?: string;
 }
 
 /**
@@ -33,10 +34,11 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
   subtitle,
   description,
-  centered = true
+  centered = true,
+  className = ''
 }) => {
   return (
-    <div className={`mb-12 sm:mb-16 ${centered ? 'text-center' : 'text-left'}`}>
+    <div className={`mb-12 sm:mb-16 ${centered ? 'text-center' : 'text-left'} ${className}`}>
       {subtitle && (
         <p className="text-sm sm:text-base font-bold text-purple-600 uppercase tracking-wider mb-3 sm:mb-4">
           {subtitle}
@@ -46,7 +48,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         {title}
       </h2>
       {description && (
-        <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto lg:mx-0">
+        <p className={`text-lg sm:text-xl text-gray-600 max-w-2xl ${centered ? 'mx-auto' : 'mx-0'}`}>
           {description}
         </p>
       )}

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNewsletter } from '../hooks/useAppState';
 import { Mail, Sparkles, Gift, Users, CheckCircle } from 'lucide-react';
+import { SectionHeader } from './UIComponents';
+import { GlassMorphismCard } from './PremiumUIComponents';
 
 const Newsletter: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -26,7 +28,12 @@ const Newsletter: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl relative z-10">
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/50 p-6 sm:p-8 md:p-12 text-center hover:shadow-3xl hover:shadow-purple-500/10 transition-all duration-500">
+        <SectionHeader
+          title="Join Our Exclusive Community"
+          subtitle="Newsletter"
+          description="Subscribe to our newsletter and get 15% off your first order."
+        />
+        <GlassMorphismCard className="bg-white/80 text-center">
           {/* Premium Header */}
           <div className="flex justify-center mb-4 sm:mb-6">
             <div className="relative">
@@ -38,10 +45,6 @@ const Newsletter: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent px-4">
-            Join Our Exclusive Community
-          </h2>
 
           <p className="text-lg sm:text-xl mb-2 sm:mb-3 text-gray-700 font-medium px-4">
             Subscribe to our newsletter and get 15% off your first order!
@@ -127,7 +130,7 @@ const Newsletter: React.FC = () => {
               ))}
             </div>
           </div>
-        </div>
+        </GlassMorphismCard>
       </div>
     </section>
   );

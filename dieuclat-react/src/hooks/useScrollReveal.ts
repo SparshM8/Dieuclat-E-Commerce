@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface UseScrollRevealOptions {
   threshold?: number;
@@ -23,6 +23,7 @@ export const useScrollReveal = (options: UseScrollRevealOptions = {}) => {
       if (entry.isIntersecting) {
         // Add animation with delay
         setTimeout(() => {
+          entry.target.classList.remove('opacity-0');
           entry.target.classList.add('animate-fade-in-up');
         }, delay);
         observer.unobserve(entry.target);
@@ -62,7 +63,7 @@ export const useStaggerAnimation = (index: number, delay = 100) => {
  */
 export const useInView = (options: UseScrollRevealOptions = {}) => {
   const ref = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useEffect !== undefined ? useEffectState(false) : [false, () => {}];
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
@@ -83,9 +84,3 @@ export const useInView = (options: UseScrollRevealOptions = {}) => {
 
   return { ref, isVisible };
 };
-
-// Helper for useState compatibility
-function useEffectState<T>(initialValue: T): [T, (value: T) => void] {
-  const [state, setState] = require('react').useState(initialValue);
-  return [state, setState];
-}

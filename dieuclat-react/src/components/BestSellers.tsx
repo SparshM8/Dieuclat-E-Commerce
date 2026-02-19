@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import { Star, Heart, Eye, ShoppingBag, Filter, X, Search } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Filter, X, Search } from 'lucide-react';
 import { Product } from '../hooks/useAppState';
+import { PremiumProductCard, ProductCardSkeleton } from './PremiumUIComponents';
+import { SectionHeader } from './UIComponents';
 
 interface BestSellersProps {
   onAddToCart: (productId: number) => void;
@@ -22,6 +24,12 @@ const BestSellers: React.FC<BestSellersProps> = ({
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Get best sellers from products data
   const bestSellers = [
@@ -121,11 +129,14 @@ const BestSellers: React.FC<BestSellersProps> = ({
   return (
     <section className="py-16">
       <div className="container mx-auto px-6">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">Our Best Sellers</h2>
-            <p className="text-gray-700">Most loved by our customers</p>
-          </div>
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between mb-8">
+          <SectionHeader
+            title="Our Best Sellers"
+            subtitle="Customer Favorites"
+            description="Most loved by our customers"
+            centered={false}
+            className="mb-0"
+          />
           <div className="hidden md:flex gap-4">
             <label htmlFor="sortSelect" className="sr-only">Sort products</label>
             <select
@@ -239,163 +250,38 @@ const BestSellers: React.FC<BestSellersProps> = ({
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {filteredAndSortedProducts.map((product, index) => (
-            <div
-              key={product.id}
-              className="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl hover:shadow-purple-500/10 border border-gray-100/50 hover:border-purple-200/50 overflow-hidden transition-all duration-500 hover:-translate-y-2 fade-in-up"
-              data-stagger={`${index}`}
-            >
-              {/* Image Container with Enhanced Zoom */}
-              <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 image-zoom group/image">
-                <a href="#" onClick={(e) => { e.preventDefault(); onProductClick(product); }} className="block">
-                  <img
-                    src={`/${product.imageText}`}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/gift.jpeg';
-                    }}
-                    loading="lazy"
-                  />
-                  {/* Enhanced overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </a>
-
-                {/* Enhanced Luxury Badge with pulse animation */}
-                <div className="absolute top-4 left-4 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-amber-900 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border border-amber-300/50 transform transition-all duration-300 group-hover:scale-105 animate-pulse">
-                  <span className="flex items-center gap-1">
-                    <span className="w-2 h-2 bg-amber-600 rounded-full animate-ping"></span>
-                    Premium
-                  </span>
-                </div>
-
-                {/* Enhanced Wishlist Button with better animation */}
-                <button
-                  onClick={() => onToggleWishlist(product.id)}
-                  className="absolute top-4 right-4 w-12 h-12 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 hover:scale-110 border border-white/20 hover:border-red-200"
-                  aria-label={`Add ${product.name} to wishlist`}
-                >
-                  <Heart className={`w-5 h-5 transition-all duration-200 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500 scale-110 animate-pulse' : 'text-gray-600 hover:text-red-500'}`} />
-                </button>
-
-                {/* Enhanced Quick View Button */}
-                <button
-                  onClick={() => onQuickView(product)}
-                  className="absolute bottom-4 right-4 w-12 h-12 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 hover:scale-110 border border-white/20 hover:border-purple-200"
-                  aria-label={`Quick view ${product.name}`}
-                >
-                  <Eye className="w-5 h-5 text-gray-600 hover:text-purple-600 transition-colors duration-200" />
-                </button>
-
-                {/* Enhanced Sale Badge with better animation */}
-                <div className="absolute top-4 right-16 bg-gradient-to-r from-red-500 via-pink-500 to-red-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg transform -translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-100 hover:scale-105">
-                  <span className="flex items-center gap-1">
-                    <span>25% OFF</span>
-                    <span className="text-xs animate-bounce">🔥</span>
-                  </span>
-                </div>
-
-                {/* Enhanced Stock Indicator with availability count */}
-                {product.inStock && (
-                  <div className="absolute bottom-4 left-4 flex items-center gap-1 bg-green-500/95 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                    <span className="font-semibold">In Stock</span>
-                  </div>
-                )}
-
-                {/* Color Swatch for products with colors */}
-                {product.color && (
-                  <div className="absolute bottom-16 left-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div
-                      className="w-6 h-6 rounded-full border-2 border-white shadow-md"
-                      style={{ backgroundColor: product.color }}
-                      title={`Color: ${product.color}`}
-                    ></div>
-                  </div>
-                )}
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <ProductCardSkeleton key={`best-sellers-skeleton-${index}`} />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            {filteredAndSortedProducts.map((product, index) => (
+              <div
+                key={product.id}
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <PremiumProductCard
+                  id={product.id}
+                  name={product.name}
+                  price={product.price}
+                  originalPrice={Number((product.price * 1.33).toFixed(2))}
+                  image={`/${product.imageText}`}
+                  rating={4.9}
+                  badge="Best Seller"
+                  isWishlisted={isInWishlist(product.id)}
+                  onAddToCart={() => onAddToCart(product.id)}
+                  onWishlist={() => onToggleWishlist(product.id)}
+                  onQuickView={() => onQuickView(product)}
+                  onClick={() => onProductClick(product)}
+                />
               </div>
-
-              {/* Enhanced Content Section */}
-              <div className="p-5 sm:p-6 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
-                {/* Subtle background pattern */}
-                <div className="absolute inset-0 opacity-[0.02] bg-gradient-to-br from-purple-500 via-transparent to-pink-500"></div>
-
-                {/* Category with enhanced styling */}
-                <div className="relative z-10 text-xs font-bold text-gradient uppercase tracking-wider mb-3 transform transition-all duration-300 group-hover:scale-105">
-                  {product.category.replace('-', ' ')}
-                </div>
-
-                {/* Title with improved hover effect */}
-                <h3 className="relative z-10 text-lg sm:text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight group-hover:text-purple-700 transition-colors duration-300">
-                  <a
-                    href="#"
-                    onClick={(e) => { e.preventDefault(); onQuickView(product); }}
-                    className="hover:text-purple-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-sm"
-                    aria-label={`View details for ${product.name}`}
-                  >
-                    {product.name}
-                  </a>
-                </h3>
-
-                {/* Enhanced Rating with interactive stars */}
-                <div className="relative z-10 flex items-center gap-2 mb-4">
-                  <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 fill-yellow-400 text-yellow-400 transition-all duration-200 hover:scale-110 hover:fill-yellow-500"
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm font-semibold text-gray-700">4.8</span>
-                  <span className="text-xs text-gray-500">(127 reviews)</span>
-                  <button
-                    className="ml-auto text-xs text-purple-600 hover:text-purple-700 font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-sm"
-                    aria-label="Read reviews"
-                  >
-                    Read reviews
-                  </button>
-                </div>
-
-                {/* Enhanced Price Section with better layout */}
-                <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-3">
-                  <div className="flex items-baseline gap-3">
-                    <span className="text-2xl sm:text-3xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    <span className="text-sm text-gray-400 line-through group-hover:text-gray-500 transition-colors duration-300">
-                      ${(product.price * 1.33).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 px-3 py-1.5 rounded-full self-start sm:self-center shadow-sm">
-                    <span className="text-xs font-bold text-green-700">
-                      Save ${(product.price * 0.33).toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Enhanced Add to Cart Button with loading state */}
-                <button
-                  onClick={() => onAddToCart(product.id)}
-                  className="relative z-10 w-full bg-gradient-to-r from-purple-600 via-purple-600 to-pink-600 hover:from-purple-700 hover:via-purple-700 hover:to-pink-700 text-white py-4 px-4 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transform hover:scale-[1.02] hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-3 group/btn overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-                  disabled={!product.inStock}
-                  aria-label={product.inStock ? `Add ${product.name} to cart` : `${product.name} is out of stock`}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-purple-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
-                  <ShoppingBag className="w-4 h-4 relative z-10 transition-transform duration-200 group-hover/btn:scale-110" />
-                  <span className="relative z-10">
-                    {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-                  </span>
-                  {product.inStock && (
-                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-                  )}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

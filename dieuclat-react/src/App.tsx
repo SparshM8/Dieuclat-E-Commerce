@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Product } from './hooks/useAppState';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { useToast } from './hooks/useToast';
+import { useScrollReveal } from './hooks/useScrollReveal';
 import Header from './components/Header';
 import HeroEnhanced from './components/HeroEnhanced';
 import FeaturedCategories from './components/FeaturedCategories';
@@ -39,6 +40,31 @@ function AppContent() {
   const [showAuth, setShowAuth] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [showWishlist, setShowWishlist] = useState(false);
+
+  const heroRef = useScrollReveal();
+  const categoriesRef = useScrollReveal({ delay: 80 });
+  const bestSellersRef = useScrollReveal({ delay: 120 });
+  const allProductsRef = useScrollReveal({ delay: 160 });
+  const testimonialsRef = useScrollReveal({ delay: 200 });
+  const faqRef = useScrollReveal({ delay: 240 });
+  const newsletterRef = useScrollReveal({ delay: 280 });
+
+  const handleAddToCart = (productId: number) => {
+    cartState.addToCart(productId);
+    const product = products.find(item => item.id === productId);
+    show(product ? `${product.name} added to cart` : 'Added to cart', 'success', 2500);
+  };
+
+  const handleToggleWishlist = (productId: number) => {
+    const wasInWishlist = wishlistState.isInWishlist(productId);
+    wishlistState.toggleWishlist(productId);
+    const product = products.find(item => item.id === productId);
+    if (wasInWishlist) {
+      show(product ? `${product.name} removed from wishlist` : 'Removed from wishlist', 'warning', 2200);
+    } else {
+      show(product ? `${product.name} added to wishlist` : 'Added to wishlist', 'success', 2200);
+    }
+  };
 
   // Show wishlist
   if (showWishlist) {
@@ -100,8 +126,8 @@ function AppContent() {
     return (
       <ProductDetail
         product={currentProduct}
-        onAddToCart={cartState.addToCart}
-        onToggleWishlist={wishlistState.toggleWishlist}
+        onAddToCart={handleAddToCart}
+        onToggleWishlist={handleToggleWishlist}
         onQuickView={modalState.openQuickViewModal}
         isInWishlist={wishlistState.isInWishlist}
         onBack={() => setCurrentProduct(null)}
@@ -121,37 +147,37 @@ function AppContent() {
         user={authState.user}
       />
       <main>
-        <div className="fade-in">
+        <div ref={heroRef} className="opacity-0">
           <HeroEnhanced />
         </div>
-        <div className="fade-in-up stagger-1" id="occasions">
+        <div ref={categoriesRef} className="opacity-0" id="occasions">
           <FeaturedCategories />
         </div>
-        <div className="fade-in-up stagger-2" id="shop">
+        <div ref={bestSellersRef} className="opacity-0" id="shop">
           <BestSellers
-            onAddToCart={cartState.addToCart}
-            onToggleWishlist={wishlistState.toggleWishlist}
+            onAddToCart={handleAddToCart}
+            onToggleWishlist={handleToggleWishlist}
             onQuickView={modalState.openQuickViewModal}
             onProductClick={setCurrentProduct}
             isInWishlist={wishlistState.isInWishlist}
           />
         </div>
-        <div className="fade-in-up stagger-3" id="all-products">
+        <div ref={allProductsRef} className="opacity-0" id="all-products">
           <AllProducts
-            onAddToCart={cartState.addToCart}
-            onToggleWishlist={wishlistState.toggleWishlist}
+            onAddToCart={handleAddToCart}
+            onToggleWishlist={handleToggleWishlist}
             onQuickView={modalState.openQuickViewModal}
             onProductClick={setCurrentProduct}
             isInWishlist={wishlistState.isInWishlist}
           />
         </div>
-        <div className="fade-in-up stagger-4" id="about">
+        <div ref={testimonialsRef} className="opacity-0" id="about">
           <Testimonials />
         </div>
-        <div className="fade-in-up stagger-5">
+        <div ref={faqRef} className="opacity-0">
           <FAQ />
         </div>
-        <div className="fade-in-up stagger-5">
+        <div ref={newsletterRef} className="opacity-0">
           <Newsletter />
         </div>
       </main>
@@ -170,15 +196,15 @@ function AppContent() {
       <SearchModal
         isOpen={modalState.isSearchModalOpen}
         onClose={modalState.closeSearchModal}
-        onAddToCart={cartState.addToCart}
+        onAddToCart={handleAddToCart}
         onQuickView={modalState.openQuickViewModal}
       />
       <QuickViewModal
         isOpen={modalState.isQuickViewModalOpen}
         onClose={modalState.closeQuickViewModal}
         product={modalState.quickViewProduct}
-        onAddToCart={cartState.addToCart}
-        onToggleWishlist={wishlistState.toggleWishlist}
+        onAddToCart={handleAddToCart}
+        onToggleWishlist={handleToggleWishlist}
         isInWishlist={wishlistState.isInWishlist}
         onAddToRecentlyViewed={recentlyViewedState.addToRecentlyViewed}
       />
